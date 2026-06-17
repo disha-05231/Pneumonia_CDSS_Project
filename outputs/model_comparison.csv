@@ -1,0 +1,4 @@
+Model,Accuracy (%),Pneumonia Recall,False Negatives
+Baseline CNN,62.5,1.0,0
+MobileNetV2,79.8,0.99,2
+MobileNetV2 + Augmentation,89.3,0.87,50
