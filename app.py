@@ -55,10 +55,10 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
 
     st.image(
-        image,
-        caption="Uploaded Chest X-Ray",
-        use_container_width=True
-    )
+    image,
+    caption="Uploaded Chest X-Ray",
+    width=500
+)
 
     img = np.array(image)
 
