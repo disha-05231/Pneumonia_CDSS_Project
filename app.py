@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from PIL import Image
-
+from datetime import datetime
 # ---------------------------------
 # PAGE CONFIG
 # ---------------------------------
@@ -97,10 +97,16 @@ if uploaded_file is not None:
 
         st.markdown("### Image Information")
 
-        c1, c2 = st.columns(2)
+        c1, c2, c3, c4 = st.columns(4)
 
         c1.metric("Width", width)
+
         c2.metric("Height", height)
+
+        c3.metric("Format", image.format)
+
+        file_size = round(uploaded_file.size / 1024, 2)
+        c4.metric("Size (KB)", file_size)
 
     # ---------------------------------
     # PREPROCESS
@@ -124,7 +130,7 @@ if uploaded_file is not None:
     # PREDICTION
     # ---------------------------------
 
-    prediction = model.predict(img)
+    prediction = model.predict(img, verbose=0)
 
     score = float(prediction[0][0])
 
@@ -156,13 +162,36 @@ if uploaded_file is not None:
         )
 
         st.progress(confidence / 100)
+        st.markdown("### Diagnostic Assessment")
+
+        if result == "PNEUMONIA":
+
+            st.write(
+        f"🫁 Pneumonia Probability: {confidence:.2f}%"
+    )
+
+            st.write(
+        f"✅ Normal Probability: {100-confidence:.2f}%"
+    )
+
+        else:
+
+            st.write(
+        f"✅ Normal Probability: {confidence:.2f}%"
+    )
+
+            st.write(
+        f"🫁 Pneumonia Probability: {100-confidence:.2f}%"
+    )
 
         # ---------------------------------
         # DASHBOARD METRICS
         # ---------------------------------
 
         st.markdown("### Model Summary")
-
+        st.caption(
+    "Image resized to 160×160 and normalized before inference."
+)
         m1, m2, m3 = st.columns(3)
 
         m1.metric("Model", "MobileNetV2")
@@ -173,21 +202,39 @@ if uploaded_file is not None:
         # CONFIDENCE LEVEL
         # ---------------------------------
 
-        if confidence >= 90:
-            st.success("High Confidence Prediction")
+        if result == "PNEUMONIA":
 
-        elif confidence >= 75:
-            st.warning("Moderate Confidence Prediction")
+            if confidence >= 90:
+                st.error("High Risk Assessment")
+
+            elif confidence >= 75:
+                st.warning("Moderate Risk Assessment")
+
+            else:
+                st.info("Low Risk Assessment")
 
         else:
-            st.error("Low Confidence Prediction")
+
+            st.success("Normal Screening Result")
 
     # ---------------------------------
     # CLINICAL INTERPRETATION
     # ---------------------------------
 
     st.markdown("---")
+    st.subheader("Screening Status")
 
+    if result == "PNEUMONIA":
+
+        st.error(
+        "Potential Pneumonia Detected"
+    )
+
+    else:
+
+        st.success(
+        "No Significant Pneumonia Indicators"
+    )
     st.subheader("Clinical Interpretation")
 
     if result == "PNEUMONIA":
@@ -238,6 +285,9 @@ if uploaded_file is not None:
 
 st.markdown("---")
 
+st.caption(
+    f"Report Generated: {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
+)
 st.caption(
     """
     Disclaimer:
