@@ -515,13 +515,13 @@ if uploaded_file is not None:
 
             st.download_button(
 
-        "📄 Download Clinical Report",
+            "📄 Download Clinical Report",
 
-        pdf,
+            pdf,
 
-        file_name="PneumoVision_Report.pdf",
+            file_name="PneumoVision_Report.pdf",
 
-        mime="application/pdf"
+            mime="application/pdf"
 )
 
       
