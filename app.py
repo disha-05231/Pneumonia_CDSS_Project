@@ -162,23 +162,96 @@ st.write(
 st.markdown("---")
 
 # ---------------------------------
-# SIDEBAR
+# PROFESSIONAL SIDEBAR
 # ---------------------------------
 
-st.sidebar.header("Model Information")
+st.sidebar.title("🩺 PneumoVision AI")
 
-st.sidebar.success("Model: MobileNetV2")
+st.sidebar.markdown("---")
+
+st.sidebar.subheader("🧠 AI Model")
+
+st.sidebar.success("""
+**Architecture**
+
+MobileNetV2
+""")
 
 st.sidebar.info("""
-Input Size: 160 × 160
+**Transfer Learning**
 
-Classes:
-• Normal
-• Pneumonia
+ImageNet Pretrained
 
-Framework:
-• TensorFlow / Keras
+**Version**
+
+1.0
+
+**Framework**
+
+TensorFlow • Keras
 """)
+
+st.sidebar.markdown("---")
+
+st.sidebar.subheader("📊 Model Performance")
+
+c1, c2 = st.sidebar.columns(2)
+
+c1.metric("Accuracy", "80%")
+c2.metric("Precision", "84%")
+
+c3, c4 = st.sidebar.columns(2)
+
+c3.metric("Recall", "80%")
+c4.metric("F1", "78%")
+
+st.sidebar.markdown("---")
+
+st.sidebar.subheader("🖼 Input Specification")
+
+st.sidebar.write("Resolution : **160 × 160**")
+
+st.sidebar.write("Channels : **RGB**")
+
+st.sidebar.write("Classes :")
+
+st.sidebar.success("🟢 Normal")
+
+st.sidebar.error("🔴 Pneumonia")
+
+st.sidebar.markdown("---")
+
+st.sidebar.subheader("⚙ AI Workflow")
+
+st.sidebar.markdown("""
+📤 Upload X-ray
+
+⬇
+
+🖼 Resize Image
+
+⬇
+
+🎨 Normalize Pixels
+
+⬇
+
+🧠 MobileNetV2
+
+⬇
+
+📊 Prediction
+
+⬇
+
+📄 Clinical Report
+""")
+
+st.sidebar.markdown("---")
+
+st.sidebar.caption(
+    "Clinical Decision Support System\nVersion 1.0"
+)
 
 # ---------------------------------
 # FILE UPLOAD
@@ -306,24 +379,6 @@ if uploaded_file is not None:
         # DASHBOARD METRICS
         # ---------------------------------
 
-        st.markdown("### Model Summary")
-        st.caption(
-    "Image resized to 160×160 and normalized before inference."
-)
-        m1, m2, m3 = st.columns(3)
-
-        m1.metric("Model", "MobileNetV2")
-        m2.metric("Classes", "2")
-        m3.metric("Input", "160×160")
-        
-        st.markdown("### Model Performance")
-
-        p1, p2, p3, p4 = st.columns(4)
-
-        p1.metric("Accuracy", "80%")
-        p2.metric("Precision", "84%")
-        p3.metric("Recall", "80%")
-        p4.metric("F1 Score", "78%")
 
         # ---------------------------------
         # CONFIDENCE LEVEL
