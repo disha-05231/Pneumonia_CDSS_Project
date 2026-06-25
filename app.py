@@ -269,99 +269,112 @@ st.info(
 # ---------------------------------
 # PREDICTION PIPELINE
 # ---------------------------------
-
 if uploaded_file is not None:
 
     image = Image.open(uploaded_file).convert("RGB")
 
-    col1, col2 = st.columns([1, 1])
+    left, right = st.columns([1, 1])
 
-    with col1:
+    with left:
 
-        # Display uploaded X-ray
+        # -----------------------------
+        # Display Uploaded X-ray
+        # -----------------------------
         st.image(
-        image,
-        caption="Uploaded Chest X-Ray",
-        width=450
-    )
+            image,
+            caption="Uploaded Chest X-Ray",
+            width=450
+        )
 
-    # -----------------------------
-    # Computer Vision Processing
-    # -----------------------------
-
+        # -----------------------------
+        # Computer Vision Processing
+        # -----------------------------
         gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
 
         clahe = cv2.createCLAHE(
-        clipLimit=2.0,
-        tileGridSize=(8, 8)
-    )
+            clipLimit=2.0,
+            tileGridSize=(8, 8)
+        )
 
         clahe_img = clahe.apply(gray)
 
         edges = cv2.Canny(gray, 80, 150)
 
+        # -----------------------------
+        # Resize images
+        # -----------------------------
+        display_size = (250, 250)
+
+        input_img = cv2.resize(np.array(image), display_size)
+        gray_img = cv2.resize(gray, display_size)
+        clahe_display = cv2.resize(clahe_img, display_size)
+        edge_display = cv2.resize(edges, display_size)
+
+        # Convert grayscale images to RGB
+        gray_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2RGB)
+        clahe_display = cv2.cvtColor(clahe_display, cv2.COLOR_GRAY2RGB)
+        edge_display = cv2.cvtColor(edge_display, cv2.COLOR_GRAY2RGB)
+
+        # -----------------------------
+        # Add titles
+        # -----------------------------
+        font = cv2.FONT_HERSHEY_SIMPLEX
+
+        def add_title(img, text):
+            img = img.copy()
+
+            cv2.putText(
+                img,
+                text,
+                (10, 25),
+                font,
+                0.7,
+                (0, 255, 0),
+                2
+            )
+
+            return img
+
+        input_img = add_title(input_img, "Input X-ray")
+        gray_img = add_title(gray_img, "Grayscale")
+        clahe_display = add_title(clahe_display, "CLAHE Enhanced")
+        edge_display = add_title(edge_display, "Edge Detection")
+
+        # -----------------------------
+        # Create Collage
+        # -----------------------------
+        top = np.hstack((input_img, gray_img))
+        bottom = np.hstack((clahe_display, edge_display))
+        collage = np.vstack((top, bottom))
+
+        # -----------------------------
+        # Show Computer Vision Pipeline
+        # -----------------------------
+        st.markdown("### 🔬 Computer Vision Processing")
+
+        st.image(
+            collage,
+            caption="Computer Vision Processing Pipeline",
+            use_container_width=True
+        )
+
+        # -----------------------------
+        # Image Information
+        # -----------------------------
         width, height = image.size
         file_size = round(uploaded_file.size / 1024, 2)
 
-        st.markdown("### 🔬 Computer Vision Processing")
+        st.markdown("### 📷 Image Information")
 
-        # Only ONE level of columns
-        cv_col, info_col = st.columns([2, 1])
+        st.info(f"""
+**Resolution:** {width} × {height}
 
-    # -----------------------------
-    # LEFT : CV Images
-    # -----------------------------
+**Format:** JPEG
 
-        with cv_col:
+**Size:** {file_size} KB
 
-            img1, img2 = st.columns(2)
-
-            with img1:
-                st.image(
-                image,
-                caption="Input X-ray",
-                use_container_width=True
-            )
-
-            with img2:
-                st.image(
-                gray,
-                caption="Grayscale",
-                clamp=True,
-                use_container_width=True
-            )
-
-            img3, img4 = st.columns(2)
-
-            with img3:
-                st.image(
-                clahe_img,
-                caption="CLAHE Enhanced",
-                clamp=True,
-                use_container_width=True
-            )
-
-            with img4:
-                st.image(
-                edges,
-                caption="Edge Detection",
-                clamp=True,
-                use_container_width=True
-            )
-
-    # -----------------------------
-    # RIGHT : Image Information
-    # -----------------------------
-
-        with info_col:
-
-            st.markdown("### 📷 Image Information")
-
-            st.metric("Resolution", f"{width} × {height}")
-            st.metric("Format", "JPEG")
-            st.metric("Size", f"{file_size} KB")
-            st.metric("Channels", "RGB")
-
+**Channels:** RGB
+""")
     # ---------------------------------
     # PREPROCESS
     # ---------------------------------
@@ -388,7 +401,7 @@ if uploaded_file is not None:
 
     score = float(prediction[0][0])
 
-    with col2:
+    with right:
 
         st.markdown("""
 # 🧠 AI Diagnostic Report
