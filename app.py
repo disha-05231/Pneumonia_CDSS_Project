@@ -355,12 +355,12 @@ if uploaded_file is not None:
 
         with info_col:
 
-        st.markdown("### 📷 Image Information")
+            st.markdown("### 📷 Image Information")
 
-        st.metric("Resolution", f"{width} × {height}")
-        st.metric("Format", "JPEG")
-        st.metric("Size", f"{file_size} KB")
-        st.metric("Channels", "RGB")
+            st.metric("Resolution", f"{width} × {height}")
+            st.metric("Format", "JPEG")
+            st.metric("Size", f"{file_size} KB")
+            st.metric("Channels", "RGB")
 
     # ---------------------------------
     # PREPROCESS
