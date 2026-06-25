@@ -281,7 +281,7 @@ if uploaded_file is not None:
         st.image(
             image,
             caption="Uploaded Chest X-Ray",
-            use_container_width=True
+            width=450
         )
 
         width, height = image.size
