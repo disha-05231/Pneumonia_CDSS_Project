@@ -278,8 +278,8 @@ if uploaded_file is not None:
 
     with col1:
 
-    # Display uploaded X-ray
-    st.image(
+        # Display uploaded X-ray
+        st.image(
         image,
         caption="Uploaded Chest X-Ray",
         width=450
@@ -289,60 +289,60 @@ if uploaded_file is not None:
     # Computer Vision Processing
     # -----------------------------
 
-    gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
+        gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
 
-    clahe = cv2.createCLAHE(
+        clahe = cv2.createCLAHE(
         clipLimit=2.0,
         tileGridSize=(8, 8)
     )
 
-    clahe_img = clahe.apply(gray)
+        clahe_img = clahe.apply(gray)
 
-    edges = cv2.Canny(gray, 80, 150)
+        edges = cv2.Canny(gray, 80, 150)
 
-    width, height = image.size
-    file_size = round(uploaded_file.size / 1024, 2)
+        width, height = image.size
+        file_size = round(uploaded_file.size / 1024, 2)
 
-    st.markdown("### 🔬 Computer Vision Processing")
+        st.markdown("### 🔬 Computer Vision Processing")
 
-    # Only ONE level of columns
-    cv_col, info_col = st.columns([2, 1])
+        # Only ONE level of columns
+        cv_col, info_col = st.columns([2, 1])
 
     # -----------------------------
     # LEFT : CV Images
     # -----------------------------
 
-    with cv_col:
+        with cv_col:
 
-        img1, img2 = st.columns(2)
+            img1, img2 = st.columns(2)
 
-        with img1:
-            st.image(
+            with img1:
+                st.image(
                 image,
                 caption="Input X-ray",
                 use_container_width=True
             )
 
-        with img2:
-            st.image(
+            with img2:
+                st.image(
                 gray,
                 caption="Grayscale",
                 clamp=True,
                 use_container_width=True
             )
 
-        img3, img4 = st.columns(2)
+            img3, img4 = st.columns(2)
 
-        with img3:
-            st.image(
+            with img3:
+                st.image(
                 clahe_img,
                 caption="CLAHE Enhanced",
                 clamp=True,
                 use_container_width=True
             )
 
-        with img4:
-            st.image(
+            with img4:
+                st.image(
                 edges,
                 caption="Edge Detection",
                 clamp=True,
@@ -353,7 +353,7 @@ if uploaded_file is not None:
     # RIGHT : Image Information
     # -----------------------------
 
-    with info_col:
+        with info_col:
 
         st.markdown("### 📷 Image Information")
 
