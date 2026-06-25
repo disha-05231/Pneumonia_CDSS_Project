@@ -524,26 +524,7 @@ if uploaded_file is not None:
         mime="application/pdf"
 )
 
-        # ---------------------------------
-        # CONFIDENCE LEVEL
-        # ---------------------------------
-
-        if result == "PNEUMONIA":
-
-            if confidence >= 90:
-                st.error("High Risk Assessment")
-
-            elif confidence >= 75:
-                st.warning("Moderate Risk Assessment")
-
-            else:
-                st.info("Low Risk Assessment")
-
-        else:
-
-            st.success("Normal Screening Result")
-
-
+      
         
 # ---------------------------------
 # FOOTER
