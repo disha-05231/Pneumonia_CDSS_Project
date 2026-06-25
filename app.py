@@ -148,7 +148,7 @@ def create_pdf(result, confidence):
 # HEADER
 # ---------------------------------
 
-st.title("🩺 PNEUMOVISION AI")
+st.title("🩺 PneumoVision AI")
 st.subheader("AI-Powered Clinical Decision Support System")
 
 st.write(
