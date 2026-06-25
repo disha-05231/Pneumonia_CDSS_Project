@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from PIL import Image
 from datetime import datetime
+import matplotlib.cm as cm
 # ---------------------------------
 # PAGE CONFIG
 # ---------------------------------
@@ -25,6 +26,48 @@ def load_model():
     return tf.keras.models.load_model(MODEL_PATH)
 
 model = load_model()
+# ---------------------------------
+# GRAD CAM
+# ---------------------------------
+
+def make_gradcam_heatmap(img_array, model):
+
+    base_model = model.layers[0]
+
+    last_conv_layer = base_model.get_layer("out_relu")
+
+    grad_model = tf.keras.models.Model(
+        inputs=model.inputs,
+        outputs=[
+            last_conv_layer.output,
+            model.output
+        ]
+    )
+
+    with tf.GradientTape() as tape:
+
+        conv_outputs, predictions = grad_model(img_array)
+
+        loss = predictions[:, 0]
+
+    grads = tape.gradient(loss, conv_outputs)
+
+    pooled_grads = tf.reduce_mean(
+        grads,
+        axis=(0, 1, 2)
+    )
+
+    conv_outputs = conv_outputs[0]
+
+    heatmap = conv_outputs @ pooled_grads[..., tf.newaxis]
+
+    heatmap = tf.squeeze(heatmap)
+
+    heatmap = tf.maximum(heatmap, 0)
+
+    heatmap /= tf.math.reduce_max(heatmap)
+
+    return heatmap.numpy()
 
 # ---------------------------------
 # HEADER
@@ -131,6 +174,8 @@ if uploaded_file is not None:
     # ---------------------------------
 
     prediction = model.predict(img, verbose=0)
+    
+    heatmap = make_gradcam_heatmap(img, model)
 
     score = float(prediction[0][0])
 
@@ -229,7 +274,53 @@ if uploaded_file is not None:
     # ---------------------------------
     # CLINICAL INTERPRETATION
     # ---------------------------------
+    st.markdown("---")
 
+    st.subheader("Explainable AI (Grad-CAM)")
+
+    heatmap = np.uint8(255 * heatmap)
+
+    jet = cm.get_cmap("jet")
+
+    jet_colors = jet(np.arange(256))[:, :3]
+
+    jet_heatmap = jet_colors[heatmap]
+
+    jet_heatmap = Image.fromarray(
+        np.uint8(jet_heatmap * 255)
+)
+
+    jet_heatmap = jet_heatmap.resize(image.size)
+
+    jet_heatmap = np.array(jet_heatmap)
+
+    superimposed_img = (
+        jet_heatmap * 0.4 +
+        np.array(image)
+)
+
+    superimposed_img = np.uint8(superimposed_img)
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+
+        st.image(
+        image,
+        caption="Original Chest X-Ray"
+    )
+
+    with c2:
+
+        st.image(
+        superimposed_img,
+        caption="AI Attention Heatmap"
+    )
+
+    st.info(
+    "Highlighted regions indicate the areas that contributed most to the model's prediction."
+)
+    
     st.markdown("---")
     st.subheader("Screening Status")
 
