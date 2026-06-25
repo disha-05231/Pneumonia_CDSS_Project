@@ -327,53 +327,101 @@ if uploaded_file is not None:
 
     with col2:
 
-        st.subheader("Prediction Result")
+        st.markdown("""
+# 🧠 AI Diagnostic Report
+""")
 
         if score > 0.5:
 
             confidence = score * 100
             result = "PNEUMONIA"
 
-            st.error(
-                "Prediction: PNEUMONIA"
-            )
+            st.markdown("""
+            ### 🫁 Prediction
+
+            # **PNEUMONIA**
+            """)
+
+            st.error("Positive Screening Result")
 
         else:
 
             confidence = (1 - score) * 100
             result = "NORMAL"
 
-            st.success(
-                "Prediction: NORMAL"
+            st.markdown("""
+            ### ✅ Prediction
+
+            # **NORMAL**
+            """)
+
+            st.success("No Significant Abnormality Detected")
+
+        st.markdown("### 🎯 Confidence Score")
+
+        st.markdown(
+            f"<h1 style='color:#1f77b4'>{confidence:.2f}%</h1>",
+            unsafe_allow_html=True
             )
 
-        st.metric(
-            "Confidence Score",
-            f"{confidence:.2f}%"
-        )
-
         st.progress(confidence / 100)
-        st.markdown("### Diagnostic Assessment")
+        st.markdown("### 🚦 Clinical Risk Level")
+        if result == "PNEUMONIA":
+
+            if confidence >= 90:
+
+                st.error("🔴 HIGH RISK")
+
+            elif confidence >= 75:
+
+                st.warning("🟠 MODERATE RISK")
+
+            else:
+
+                st.info("🟡 LOW RISK")
+
+    else:
+
+        st.success("🟢 NORMAL")
+        
+        
+        st.markdown("## 📊 AI Probability Analysis")
 
         if result == "PNEUMONIA":
 
-            st.write(
-        f"🫁 Pneumonia Probability: {confidence:.2f}%"
-    )
+            left, right = st.columns(2)
 
-            st.write(
-        f"✅ Normal Probability: {100-confidence:.2f}%"
-    )
+            with left:
+                st.success("🫁 Pneumonia")
+                st.markdown(
+            f"<h2 style='color:#d62728;'>{confidence:.2f}%</h2>",
+            unsafe_allow_html=True
+        )
 
-        else:
+            with right:
+                st.info("✅ Normal")
+                st.markdown(
+            f"<h2 style='color:#2ca02c;'>{100-confidence:.2f}%</h2>",
+            unsafe_allow_html=True
+        )
 
-            st.write(
-        f"✅ Normal Probability: {confidence:.2f}%"
-    )
+    else:
 
-            st.write(
-        f"🫁 Pneumonia Probability: {100-confidence:.2f}%"
-    )
+        left, right = st.columns(2)
+
+        with left:
+            st.success("✅ Normal")
+            st.markdown(
+            f"<h2 style='color:#2ca02c;'>{confidence:.2f}%</h2>",
+            unsafe_allow_html=True
+        )
+
+        with right:
+            st.info("🫁 Pneumonia")
+            st.markdown(
+            f"<h2 style='color:#d62728;'>{100-confidence:.2f}%</h2>",
+            unsafe_allow_html=True
+        )
 
         # ---------------------------------
         # DASHBOARD METRICS
