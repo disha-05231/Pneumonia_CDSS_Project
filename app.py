@@ -284,20 +284,64 @@ if uploaded_file is not None:
             width=450
         )
 
+        gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
+
+        clahe = cv2.createCLAHE(
+        clipLimit=2.0,
+        tileGridSize=(8,8)
+)
+        clahe_img = clahe.apply(gray)
+
+        edges = cv2.Canny(gray,80,150)
         width, height = image.size
 
-        st.markdown("### Image Information")
+        st.markdown("### 🔬 Computer Vision Processing")
 
-        c1, c2, c3, c4 = st.columns(4)
+        left_cv, right_info = st.columns([1,1])
+        with left_cv:
 
-        c1.metric("Width", width)
+            a,b = st.columns(2)
 
-        c2.metric("Height", height)
+            with a:
+                st.image(image,
+                 caption="Input X-ray",
+                 use_container_width=True)
 
-        c3.metric("Format", image.format)
+            with b:
+                st.image(gray,
+                 caption="Grayscale",
+                 clamp=True,
+                 use_container_width=True)
 
-        file_size = round(uploaded_file.size / 1024, 2)
-        c4.metric("Size (KB)", file_size)
+            c,d = st.columns(2)
+
+            with c:
+                st.image(clahe_img,
+                 caption="CLAHE Enhanced",
+                 clamp=True,
+                 use_container_width=True)
+
+            with d:
+                st.image(edges,
+                 caption="Edge Detection",
+                 clamp=True,
+                 use_container_width=True)
+        
+        with right_info:
+
+            st.markdown("### 📋 Image Information")
+
+            file_size = round(uploaded_file.size/1024,2)
+
+            st.info(f"""
+            **Resolution :** {width} × {height}
+
+            **Format :** JPEG
+
+            **Size :** {file_size} KB
+
+            **Channels :** RGB
+            """)
 
     # ---------------------------------
     # PREPROCESS
