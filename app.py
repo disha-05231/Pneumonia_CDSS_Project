@@ -405,20 +405,20 @@ if uploaded_file is not None:
             unsafe_allow_html=True
         )
 
-    else:
+        else:
 
-        left, right = st.columns(2)
+            left, right = st.columns(2)
 
-        with left:
-            st.success("✅ Normal")
-            st.markdown(
+            with left:
+                st.success("✅ Normal")
+                st.markdown(
             f"<h2 style='color:#2ca02c;'>{confidence:.2f}%</h2>",
             unsafe_allow_html=True
         )
 
-        with right:
-            st.info("🫁 Pneumonia")
-            st.markdown(
+            with right:
+                st.info("🫁 Pneumonia")
+                st.markdown(
             f"<h2 style='color:#d62728;'>{100-confidence:.2f}%</h2>",
             unsafe_allow_html=True
         )
