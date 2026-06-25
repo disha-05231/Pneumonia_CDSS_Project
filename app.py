@@ -353,10 +353,10 @@ if uploaded_file is not None:
         st.markdown("### 🔬 Computer Vision Processing")
 
         st.image(
-            collage,
-            caption="Computer Vision Processing Pipeline",
-            use_container_width=True
-        )
+    collage,
+    caption="Computer Vision Processing Pipeline",
+    width=500
+)
 
         # -----------------------------
         # Image Information
