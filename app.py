@@ -380,9 +380,9 @@ if uploaded_file is not None:
 
                 st.info("🟡 LOW RISK")
 
-    else:
+        else:
 
-        st.success("🟢 NORMAL")
+            st.success("🟢 NORMAL")
         
         
         st.markdown("## 📊 AI Probability Analysis")
