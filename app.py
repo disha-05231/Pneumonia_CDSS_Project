@@ -249,8 +249,6 @@ if uploaded_file is not None:
     # ---------------------------------
 
     prediction = model.predict(img, verbose=0)
-    
-    heatmap = make_gradcam_heatmap(img, model)
 
     score = float(prediction[0][0])
 
