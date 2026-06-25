@@ -148,7 +148,7 @@ def create_pdf(result, confidence):
 # HEADER
 # ---------------------------------
 
-st.title("🩺 PneumoVision AI")
+st.title("🩺 PNEUMOVISION AI")
 st.subheader("AI-Powered Clinical Decision Support System")
 
 st.write(
@@ -280,8 +280,8 @@ if uploaded_file is not None:
 
         st.image(
             image,
+            use_container_width=True,
             caption="Uploaded Chest X-Ray",
-            width=450
         )
 
         width, height = image.size
@@ -384,25 +384,6 @@ if uploaded_file is not None:
 
             st.success("🟢 NORMAL")
         
-         # ---------------------------------
-        # CONFIDENCE LEVEL
-        # ---------------------------------
-
-        if result == "PNEUMONIA":
-
-            if confidence >= 90:
-                st.error("High Risk Assessment")
-
-            elif confidence >= 75:
-                st.warning("Moderate Risk Assessment")
-
-            else:
-                st.info("Low Risk Assessment")
-
-        else:
-
-            st.success("Normal Screening Result")
-
         
         st.markdown("## 📊 AI Probability Analysis")
 
@@ -441,32 +422,32 @@ if uploaded_file is not None:
             f"<h2 style='color:#d62728;'>{100-confidence:.2f}%</h2>",
             unsafe_allow_html=True
         )
-        st.markdown("---")
+    st.markdown("---")
 
-        left2, right2 = st.columns([1,1])
-        with left2:
+    left2, right2 = st.columns([1,1])
+    with left2:
         # ---------------------------------
         # CLINICAL INTERPRETATION
         # ---------------------------------
     
-            st.subheader("Screening Status")
+        st.subheader("Screening Status")
 
-            if result == "PNEUMONIA":
+        if result == "PNEUMONIA":
 
-                st.error(
+            st.error(
         "Potential Pneumonia Detected"
     )
 
-            else:
+        else:
 
-                st.success(
+            st.success(
         "No Significant Pneumonia Indicators"
     )
-            st.subheader("Clinical Interpretation")
+        st.subheader("Clinical Interpretation")
 
-            if result == "PNEUMONIA":
+        if result == "PNEUMONIA":
 
-                st.warning(
+            st.warning(
             """
             The model detected radiographic patterns commonly associated
             with pneumonia. Further clinical evaluation and expert review
@@ -474,46 +455,46 @@ if uploaded_file is not None:
             """
         )
 
-            else:
+        else:
 
-                st.success(
+            st.success(
             """
             No strong radiographic evidence of pneumonia was identified
             by the model. Clinical correlation is recommended.
             """
         )
 
-        with right2:
+    with right2:
             # ---------------------------------
         # RECOMMENDATION
         # ---------------------------------
 
-            st.subheader("Clinical Recommendation")
+        st.subheader("Clinical Recommendation")
 
-            if result == "PNEUMONIA":
+        if result == "PNEUMONIA":
 
-                st.error(
+            st.error(
             """
             Recommend further diagnostic assessment by a qualified
             healthcare professional.
             """
         )
 
-            else:
+        else:
 
-                st.info(
+            st.info(
             """
             No significant signs of pneumonia detected by the model.
             """
         )
-            st.markdown("---")
+        st.markdown("---")
 
         pdf = create_pdf(
         result,
         confidence
 )
 
-            st.download_button(
+        st.download_button(
 
             "📄 Download Clinical Report",
 
