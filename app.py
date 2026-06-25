@@ -4,7 +4,11 @@ import numpy as np
 import cv2
 from PIL import Image
 from datetime import datetime
-import matplotlib.cm as cm
+import io
+
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 # ---------------------------------
 # PAGE CONFIG
 # ---------------------------------
@@ -27,48 +31,119 @@ def load_model():
 
 model = load_model()
 # ---------------------------------
-# GRAD CAM
+# PDF REPORT
 # ---------------------------------
 
-def make_gradcam_heatmap(img_array, model):
+def create_pdf(result, confidence):
 
-    base_model = model.layers[0]
+    buffer = io.BytesIO()
 
-    last_conv_layer = base_model.get_layer("out_relu")
+    doc = SimpleDocTemplate(buffer)
 
-    grad_model = tf.keras.models.Model(
-        inputs=model.inputs,
-        outputs=[
-            last_conv_layer.output,
-            model.output
-        ]
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    story.append(
+        Paragraph(
+            "<b>PNEUMOVISION AI</b>",
+            styles["Title"]
+        )
     )
 
-    with tf.GradientTape() as tape:
-
-        conv_outputs, predictions = grad_model(img_array)
-
-        loss = predictions[:, 0]
-
-    grads = tape.gradient(loss, conv_outputs)
-
-    pooled_grads = tf.reduce_mean(
-        grads,
-        axis=(0, 1, 2)
+    story.append(
+        Paragraph(
+            "Clinical Decision Support Report",
+            styles["Heading2"]
+        )
     )
 
-    conv_outputs = conv_outputs[0]
+    story.append(
+        Paragraph(
+            f"<b>Date:</b> {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}",
+            styles["BodyText"]
+        )
+    )
 
-    heatmap = conv_outputs @ pooled_grads[..., tf.newaxis]
+    story.append(
+        Paragraph(
+            f"<b>Prediction:</b> {result}",
+            styles["BodyText"]
+        )
+    )
 
-    heatmap = tf.squeeze(heatmap)
+    story.append(
+        Paragraph(
+            f"<b>Confidence:</b> {confidence:.2f}%",
+            styles["BodyText"]
+        )
+    )
 
-    heatmap = tf.maximum(heatmap, 0)
+    story.append(
+        Paragraph(
+            "<b>Clinical Interpretation</b>",
+            styles["Heading2"]
+        )
+    )
 
-    heatmap /= tf.math.reduce_max(heatmap)
+    if result == "PNEUMONIA":
 
-    return heatmap.numpy()
+        story.append(
+            Paragraph(
+                "The uploaded chest X-ray demonstrates imaging patterns associated with pneumonia. Clinical evaluation is recommended.",
+                styles["BodyText"]
+            )
+        )
 
+    else:
+
+        story.append(
+            Paragraph(
+                "No significant radiographic evidence of pneumonia was identified by the model.",
+                styles["BodyText"]
+            )
+        )
+
+    story.append(
+        Paragraph(
+            "<b>Model Information</b>",
+            styles["Heading2"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "Architecture: MobileNetV2",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "Input Size: 160 × 160",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "Overall Accuracy: 80%",
+            styles["BodyText"]
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "<br/><br/>Disclaimer: This report is generated for research and educational purposes only and should not replace professional medical diagnosis.",
+            styles["Italic"]
+        )
+    )
+
+    doc.build(story)
+
+    buffer.seek(0)
+
+    return buffer
 # ---------------------------------
 # HEADER
 # ---------------------------------
@@ -274,52 +349,6 @@ if uploaded_file is not None:
     # ---------------------------------
     # CLINICAL INTERPRETATION
     # ---------------------------------
-    st.markdown("---")
-
-    st.subheader("Explainable AI (Grad-CAM)")
-
-    heatmap = np.uint8(255 * heatmap)
-
-    jet = cm.get_cmap("jet")
-
-    jet_colors = jet(np.arange(256))[:, :3]
-
-    jet_heatmap = jet_colors[heatmap]
-
-    jet_heatmap = Image.fromarray(
-        np.uint8(jet_heatmap * 255)
-)
-
-    jet_heatmap = jet_heatmap.resize(image.size)
-
-    jet_heatmap = np.array(jet_heatmap)
-
-    superimposed_img = (
-        jet_heatmap * 0.4 +
-        np.array(image)
-)
-
-    superimposed_img = np.uint8(superimposed_img)
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-
-        st.image(
-        image,
-        caption="Original Chest X-Ray"
-    )
-
-    with c2:
-
-        st.image(
-        superimposed_img,
-        caption="AI Attention Heatmap"
-    )
-
-    st.info(
-    "Highlighted regions indicate the areas that contributed most to the model's prediction."
-)
     
     st.markdown("---")
     st.subheader("Screening Status")
@@ -378,6 +407,23 @@ if uploaded_file is not None:
             No significant signs of pneumonia detected by the model.
             """
         )
+    st.markdown("---")
+
+    pdf = create_pdf(
+    result,
+    confidence
+)
+
+    st.download_button(
+
+        "📄 Download Clinical Report",
+
+        pdf,
+
+        file_name="PneumoVision_Report.pdf",
+
+        mime="application/pdf"
+)
 
 # ---------------------------------
 # FOOTER
