@@ -197,6 +197,15 @@ if uploaded_file is not None:
         m1.metric("Model", "MobileNetV2")
         m2.metric("Classes", "2")
         m3.metric("Input", "160×160")
+        
+        st.markdown("### Model Performance")
+
+        p1, p2, p3, p4 = st.columns(4)
+
+        p1.metric("Accuracy", "80%")
+        p2.metric("Precision", "84%")
+        p3.metric("Recall", "80%")
+        p4.metric("F1 Score", "78%")
 
         # ---------------------------------
         # CONFIDENCE LEVEL
