@@ -278,70 +278,89 @@ if uploaded_file is not None:
 
     with col1:
 
-        st.image(
-            image,
-            caption="Uploaded Chest X-Ray",
-            width=450
-        )
+    # Display uploaded X-ray
+    st.image(
+        image,
+        caption="Uploaded Chest X-Ray",
+        width=450
+    )
 
-        gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
+    # -----------------------------
+    # Computer Vision Processing
+    # -----------------------------
 
-        clahe = cv2.createCLAHE(
+    gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
+
+    clahe = cv2.createCLAHE(
         clipLimit=2.0,
-        tileGridSize=(8,8)
-)
-        clahe_img = clahe.apply(gray)
+        tileGridSize=(8, 8)
+    )
 
-        edges = cv2.Canny(gray,80,150)
-        width, height = image.size
+    clahe_img = clahe.apply(gray)
 
-        st.markdown("### 🔬 Computer Vision Processing")
+    edges = cv2.Canny(gray, 80, 150)
 
-        left_cv, right_info = st.columns([1,1])
-        with left_cv:
+    width, height = image.size
+    file_size = round(uploaded_file.size / 1024, 2)
 
-            a,b = st.columns(2)
+    st.markdown("### 🔬 Computer Vision Processing")
 
-            with a:
-                st.image(image,
-                 caption="Input X-ray",
-                 use_container_width=True)
+    # Only ONE level of columns
+    cv_col, info_col = st.columns([2, 1])
 
-            with b:
-                st.image(gray,
-                 caption="Grayscale",
-                 clamp=True,
-                 use_container_width=True)
+    # -----------------------------
+    # LEFT : CV Images
+    # -----------------------------
 
-            c,d = st.columns(2)
+    with cv_col:
 
-            with c:
-                st.image(clahe_img,
-                 caption="CLAHE Enhanced",
-                 clamp=True,
-                 use_container_width=True)
+        img1, img2 = st.columns(2)
 
-            with d:
-                st.image(edges,
-                 caption="Edge Detection",
-                 clamp=True,
-                 use_container_width=True)
-        
-        with right_info:
+        with img1:
+            st.image(
+                image,
+                caption="Input X-ray",
+                use_container_width=True
+            )
 
-            st.markdown("### 📋 Image Information")
+        with img2:
+            st.image(
+                gray,
+                caption="Grayscale",
+                clamp=True,
+                use_container_width=True
+            )
 
-            file_size = round(uploaded_file.size/1024,2)
+        img3, img4 = st.columns(2)
 
-            st.info(f"""
-            **Resolution :** {width} × {height}
+        with img3:
+            st.image(
+                clahe_img,
+                caption="CLAHE Enhanced",
+                clamp=True,
+                use_container_width=True
+            )
 
-            **Format :** JPEG
+        with img4:
+            st.image(
+                edges,
+                caption="Edge Detection",
+                clamp=True,
+                use_container_width=True
+            )
 
-            **Size :** {file_size} KB
+    # -----------------------------
+    # RIGHT : Image Information
+    # -----------------------------
 
-            **Channels :** RGB
-            """)
+    with info_col:
+
+        st.markdown("### 📷 Image Information")
+
+        st.metric("Resolution", f"{width} × {height}")
+        st.metric("Format", "JPEG")
+        st.metric("Size", f"{file_size} KB")
+        st.metric("Channels", "RGB")
 
     # ---------------------------------
     # PREPROCESS
