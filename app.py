@@ -447,29 +447,28 @@ if uploaded_file is not None:
 
             st.success("Normal Screening Result")
 
-    # ---------------------------------
-    # CLINICAL INTERPRETATION
-    # ---------------------------------
+        # ---------------------------------
+        # CLINICAL INTERPRETATION
+        # ---------------------------------
     
-    st.markdown("---")
-    st.subheader("Screening Status")
+        st.subheader("Screening Status")
 
-    if result == "PNEUMONIA":
+        if result == "PNEUMONIA":
 
-        st.error(
+            st.error(
         "Potential Pneumonia Detected"
     )
 
-    else:
+        else:
 
-        st.success(
+            st.success(
         "No Significant Pneumonia Indicators"
     )
-    st.subheader("Clinical Interpretation")
+        st.subheader("Clinical Interpretation")
 
-    if result == "PNEUMONIA":
+        if result == "PNEUMONIA":
 
-        st.warning(
+            st.warning(
             """
             The model detected radiographic patterns commonly associated
             with pneumonia. Further clinical evaluation and expert review
@@ -477,45 +476,45 @@ if uploaded_file is not None:
             """
         )
 
-    else:
+        else:
 
-        st.success(
+            st.success(
             """
             No strong radiographic evidence of pneumonia was identified
             by the model. Clinical correlation is recommended.
             """
         )
 
-    # ---------------------------------
-    # RECOMMENDATION
-    # ---------------------------------
+        # ---------------------------------
+        # RECOMMENDATION
+        # ---------------------------------
 
-    st.subheader("Clinical Recommendation")
+        st.subheader("Clinical Recommendation")
 
-    if result == "PNEUMONIA":
+        if result == "PNEUMONIA":
 
-        st.error(
+            st.error(
             """
             Recommend further diagnostic assessment by a qualified
             healthcare professional.
             """
         )
 
-    else:
+        else:
 
-        st.info(
+            st.info(
             """
             No significant signs of pneumonia detected by the model.
             """
         )
-    st.markdown("---")
+        st.markdown("---")
 
-    pdf = create_pdf(
-    result,
-    confidence
+        pdf = create_pdf(
+        result,
+        confidence
 )
 
-    st.download_button(
+        st.download_button(
 
         "📄 Download Clinical Report",
 
