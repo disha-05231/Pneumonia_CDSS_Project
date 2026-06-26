@@ -1,4 +1,4 @@
-markdown
+
 # 🫁 PneumoVision AI
 ### MobileNetV2-Based Clinical Decision Support System for Automated Pneumonia Screening using Chest X-Ray Images
 
