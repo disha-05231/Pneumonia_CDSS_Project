@@ -343,16 +343,16 @@ if uploaded_file is not None:
 
         with cv_col1:
             st.image(
-        model_display,
-        caption="① Model Input (160×160)",
-        use_container_width=True
-    )
+    model_display,
+    caption="① Model Input",
+    width=250
+)
 
         with cv_col2:
             st.image(
         gray_img,
         caption="② Grayscale",
-        use_container_width=True
+        width=250
     )
 
         cv_col3, cv_col4 = st.columns(2)
@@ -361,14 +361,14 @@ if uploaded_file is not None:
             st.image(
         clahe_display,
         caption="③ CLAHE Enhanced",
-        use_container_width=True
+        width=250
     )
 
         with cv_col4:
             st.image(
         edge_display,
         caption="④ Edge Detection",
-        use_container_width=True
+        width=250
     )
 
         st.caption("""
