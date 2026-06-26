@@ -392,10 +392,15 @@ for better interpretability.
 
         st.markdown("### 📷 Image Information")
 
-        st.metric("Resolution", f"{width} × {height}")
-        st.metric("Format", file_format)
-        st.metric("Size", f"{file_size} KB")
-        st.metric("Channels", image.mode)
+        st.info(f"""
+**Resolution:** {width} × {height}
+
+**Format:** {file_format}
+
+**Size:** {file_size} KB
+
+**Channels:** {image.mode}
+""")
 
 
     with summary_col:
