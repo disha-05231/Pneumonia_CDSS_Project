@@ -325,35 +325,7 @@ if uploaded_file is not None:
         clahe_display = cv2.cvtColor(clahe_display, cv2.COLOR_GRAY2RGB)
         edge_display = cv2.cvtColor(edge_display, cv2.COLOR_GRAY2RGB)
 
-        # -----------------------------
-        # Add titles
-        # -----------------------------
-        font = cv2.FONT_HERSHEY_SIMPLEX
 
-        def add_title(img, text):
-
-            img = img.copy()
-
-            # white border
-            img = cv2.copyMakeBorder(
-        img,
-        3,3,3,3,
-        cv2.BORDER_CONSTANT,
-        value=[255,255,255]
-    )
-
-            cv2.putText(
-        img,
-        text,
-        (12,30),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.65,
-        (0,180,0),
-        2,
-        cv2.LINE_AA
-    )
-
-            return img
 
         # Resize for model
         model_input = cv2.resize(np.array(image), (160,160))
@@ -361,41 +333,50 @@ if uploaded_file is not None:
         # Display larger
         model_display = cv2.resize(model_input, display_size)
 
-        model_display = add_title(model_display, "Model Input")
-        gray_img = add_title(gray_img, "Grayscale")
-        clahe_display = add_title(clahe_display, "CLAHE Enhanced")
-        edge_display = add_title(edge_display, "Edge Detection")
-
-        # -----------------------------
-        # Create Collage
-        # -----------------------------
-        top = np.hstack((model_display, gray_img))
-        bottom = np.hstack((clahe_display, edge_display))
-        collage = np.vstack((top, bottom))
-
-        # -----------------------------
-        # Show Computer Vision Pipeline
-        # -----------------------------
+       
+       # -----------------------------
+# Computer Vision Processing
+# -----------------------------
         st.markdown("### 🔬 Computer Vision Processing")
 
-        st.image(
-    collage,
-    caption="Computer Vision Processing Pipeline",
-    width=500
-)
-        st.caption(
-"""
-**Computer Vision Pipeline**
+        cv_col1, cv_col2 = st.columns(2)
 
-• Model Input (160×160): Resized image used for CNN inference
+        with cv_col1:
+            st.image(
+        model_display,
+        caption="① Model Input (160×160)",
+        use_container_width=True
+    )
 
-• Grayscale: Removes color information for intensity analysis
+        with cv_col2:
+            st.image(
+        gray_img,
+        caption="② Grayscale",
+        use_container_width=True
+    )
 
-• CLAHE: Enhances local contrast to improve visibility
+        cv_col3, cv_col4 = st.columns(2)
 
-• Edge Detection: Highlights anatomical boundaries
-"""
-)
+        with cv_col3:
+            st.image(
+        clahe_display,
+        caption="③ CLAHE Enhanced",
+        use_container_width=True
+    )
+
+        with cv_col4:
+            st.image(
+        edge_display,
+        caption="④ Edge Detection",
+        use_container_width=True
+    )
+
+        st.caption("""
+The uploaded chest X-ray undergoes preprocessing before inference.
+The model input is resized to **160×160**, converted to grayscale,
+contrast-enhanced using **CLAHE**, and visualized using **Edge Detection**
+for better interpretability.
+""")
         
         # -----------------------------
         # Image Information
@@ -410,11 +391,12 @@ if uploaded_file is not None:
 
         with colA:
             st.metric("Resolution", f"{width} × {height}")
-            st.metric("Format", "JPEG")
+            file_format = image.format if image.format else uploaded_file.name.split(".")[-1].upper()
 
+            st.metric("Format", file_format)
         with colB:
             st.metric("Size", f"{file_size} KB")
-            st.metric("Channels", "RGB")
+            st.metric("Channels", image.mode)
      # ---------------------------------
     # PREPROCESS
     # ---------------------------------
