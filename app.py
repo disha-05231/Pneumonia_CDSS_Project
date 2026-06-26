@@ -292,13 +292,23 @@ if uploaded_file is not None:
         gray = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2GRAY)
 
         clahe = cv2.createCLAHE(
-            clipLimit=2.0,
-            tileGridSize=(8, 8)
-        )
+    clipLimit=3.0,
+    tileGridSize=(8,8)
+)
 
         clahe_img = clahe.apply(gray)
 
-        edges = cv2.Canny(gray, 80, 150)
+        blur = cv2.GaussianBlur(gray,(3,3),0)
+
+        edges = cv2.Canny(
+    blur,
+    40,
+    120
+)
+
+        kernel = np.ones((2,2),np.uint8)
+
+        edges = cv2.dilate(edges,kernel,iterations=1)
 
         # -----------------------------
         # Resize images
@@ -321,21 +331,37 @@ if uploaded_file is not None:
         font = cv2.FONT_HERSHEY_SIMPLEX
 
         def add_title(img, text):
+
             img = img.copy()
 
+            # white border
+            img = cv2.copyMakeBorder(
+        img,
+        3,3,3,3,
+        cv2.BORDER_CONSTANT,
+        value=[255,255,255]
+    )
+
             cv2.putText(
-                img,
-                text,
-                (10, 25),
-                font,
-                0.7,
-                (0, 255, 0),
-                2
-            )
+        img,
+        text,
+        (12,30),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.65,
+        (0,180,0),
+        2,
+        cv2.LINE_AA
+    )
 
             return img
 
-        input_img = add_title(input_img, "Input X-ray")
+        # Resize for model
+        model_input = cv2.resize(np.array(image), (160,160))
+
+        # Display larger
+        model_display = cv2.resize(model_input, display_size)
+
+        model_display = add_title(model_display, "Model Input")
         gray_img = add_title(gray_img, "Grayscale")
         clahe_display = add_title(clahe_display, "CLAHE Enhanced")
         edge_display = add_title(edge_display, "Edge Detection")
@@ -343,7 +369,7 @@ if uploaded_file is not None:
         # -----------------------------
         # Create Collage
         # -----------------------------
-        top = np.hstack((input_img, gray_img))
+        top = np.hstack((model_display, gray_img))
         bottom = np.hstack((clahe_display, edge_display))
         collage = np.vstack((top, bottom))
 
@@ -357,25 +383,39 @@ if uploaded_file is not None:
     caption="Computer Vision Processing Pipeline",
     width=500
 )
+        st.caption(
+"""
+**Computer Vision Pipeline**
 
+• Model Input (160×160): Resized image used for CNN inference
+
+• Grayscale: Removes color information for intensity analysis
+
+• CLAHE: Enhances local contrast to improve visibility
+
+• Edge Detection: Highlights anatomical boundaries
+"""
+)
+        
         # -----------------------------
         # Image Information
         # -----------------------------
         width, height = image.size
         file_size = round(uploaded_file.size / 1024, 2)
 
+
         st.markdown("### 📷 Image Information")
 
-        st.info(f"""
-**Resolution:** {width} × {height}
+        colA, colB = st.columns(2)
 
-**Format:** JPEG
+        with colA:
+            st.metric("Resolution", f"{width} × {height}")
+            st.metric("Format", "JPEG")
 
-**Size:** {file_size} KB
-
-**Channels:** RGB
-""")
-    # ---------------------------------
+        with colB:
+            st.metric("Size", f"{file_size} KB")
+            st.metric("Channels", "RGB")
+     # ---------------------------------
     # PREPROCESS
     # ---------------------------------
 
