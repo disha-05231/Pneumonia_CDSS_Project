@@ -381,28 +381,28 @@ for better interpretability.
         # -----------------------------
         # Image Information
         # -----------------------------
-        info_col, summary_col = st.columns([1,1])
+    width, height = image.size
 
-        with info_col:
+    file_size = round(uploaded_file.size / 1024, 2)
 
-            st.markdown("### 📷 Image Information")
+    file_format = uploaded_file.name.split(".")[-1].upper()
+    info_col, summary_col = st.columns([1,1])
 
-            colA, colB = st.columns(2)
+    with info_col:
 
-            with colA:
-                st.metric("Resolution", f"{width} × {height}")
-                st.metric("Format", file_format)
+        st.markdown("### 📷 Image Information")
 
-            with colB:
-                st.metric("Size", f"{file_size} KB")
-                st.metric("Channels", image.mode)
+        st.metric("Resolution", f"{width} × {height}")
+        st.metric("Format", file_format)
+        st.metric("Size", f"{file_size} KB")
+        st.metric("Channels", image.mode)
 
 
-        with summary_col:
+    with summary_col:
 
-            st.markdown("### 🧠 AI Processing Summary")
+        st.markdown("### 🧠 AI Processing Summary")
 
-            st.markdown("""
+        st.markdown("""
 **✔ Model:** MobileNetV2
 
 **✔ Input Size:** 160 × 160 pixels
