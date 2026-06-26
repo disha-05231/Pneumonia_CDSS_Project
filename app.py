@@ -381,22 +381,38 @@ for better interpretability.
         # -----------------------------
         # Image Information
         # -----------------------------
-        width, height = image.size
-        file_size = round(uploaded_file.size / 1024, 2)
+        info_col, summary_col = st.columns([1,1])
+
+        with info_col:
+
+            st.markdown("### 📷 Image Information")
+
+            colA, colB = st.columns(2)
+
+            with colA:
+                st.metric("Resolution", f"{width} × {height}")
+                st.metric("Format", file_format)
+
+            with colB:
+                st.metric("Size", f"{file_size} KB")
+                st.metric("Channels", image.mode)
 
 
-        st.markdown("### 📷 Image Information")
+        with summary_col:
 
-        colA, colB = st.columns(2)
+            st.markdown("### 🧠 AI Processing Summary")
 
-        with colA:
-            st.metric("Resolution", f"{width} × {height}")
-            file_format = image.format if image.format else uploaded_file.name.split(".")[-1].upper()
+            st.markdown("""
+**✔ Model:** MobileNetV2
 
-            st.metric("Format", file_format)
-        with colB:
-            st.metric("Size", f"{file_size} KB")
-            st.metric("Channels", image.mode)
+**✔ Input Size:** 160 × 160 pixels
+
+**✔ Preprocessing:** CLAHE + Edge Detection
+
+**✔ Framework:** TensorFlow / Keras
+
+**✔ Output:** Binary Pneumonia Classification
+""")
      # ---------------------------------
     # PREPROCESS
     # ---------------------------------
