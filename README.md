@@ -68,37 +68,24 @@ This project aims to build an AI-assisted clinical decision support system capab
 
 # 📂 Dataset
 
-## Dataset Used
+This project uses the **Chest X-Ray Images (Pneumonia)** dataset by **Paul Mooney**, available on Kaggle. The dataset contains pediatric chest X-ray images categorized into **Normal** and **Pneumonia** classes and is widely used for deep learning-based medical image classification.
 
-**Chest X-Ray Images (Pneumonia)**
+### Dataset Overview
 
-Dataset contains two categories:
+- **Classes:** Normal, Pneumonia
+- **Dataset Split:** Training, Validation, Test
+- **Task:** Binary Image Classification
+- **Image Type:** Chest X-ray (JPEG)
+- **Characteristics:** Medical chest radiographs with class imbalance and varying image dimensions.
 
-- Normal
-- Pneumonia
+> **Note:** The dataset is **not included** in this repository due to its size and GitHub storage limitations. Please download it from the official Kaggle page before running the notebooks or the Streamlit application.
 
----
-
-## Dataset Split
-
-- Training Set
-- Validation Set
-- Test Set
-
----
-
-## Dataset Characteristics
-
-- Binary classification dataset
-- Medical chest radiographs
-- Class imbalance toward pneumonia samples
-- Variable image dimensions
-- JPEG image format
+**🔗 Dataset Link:**  
+https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
 
 ---
 
 # ⚙️ Complete Project Workflow
-
 
 
 Chest X-ray Image
